@@ -3,6 +3,9 @@ package com.aniruddha.aadpractice
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -15,16 +18,37 @@ import android.support.v4.app.NotificationManagerCompat
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
+    private lateinit var jobScheduler : JobScheduler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         notificationButton.setOnClickListener(this)
+        scheduleJob.setOnClickListener(this)
+        cancelJob.setOnClickListener(this)
+        idleSwitch.setOnClickListener(this)
+        chargingSwitch.setOnClickListener(this)
+
+        // SeekBar sets the deadline to execute the task between 0 to 100.
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (progress > 0) {
+                    seekBarProgress.text = progress.toString()
+                } else {
+                    seekBarProgress.text = "Not Set"
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
     }
 
     override fun onResume() {
@@ -39,6 +63,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.notificationButton -> startNotification()
+            R.id.scheduleJob -> scheduleJob()
+            R.id.cancelJob -> cancelJob()
         }
     }
 
@@ -90,7 +116,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     /**
-     * create custom toast with given string description to show
+     * create custom toast with given string description to show.
+     * Should be public, so other classes can use this.
      */
     fun customToast(data: String) {
         val inflater = layoutInflater
@@ -114,17 +141,65 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Sample channel"
             val detailText = "description for sample channel"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(AADConstants.CHANNEL_ID, name, importance).apply {
-                description = detailText
-                enableVibration(true)
-                enableLights(true)
-                lightColor = Color.RED
-            }
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(AADConstants.CHANNEL_ID, name, importance)
+                .apply {
+                    description = detailText
+                    enableVibration(true)
+                    enableLights(true)
+                    lightColor = Color.RED
+                }
 
             val notificationManager : NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    /**
+     * Creates the JobInfo object which gives the set of conditions to trigger the job.
+     * Also create JobScheduler which schedule the job based on this constraints.
+     */
+    private fun scheduleJob() {
+        val networkOption = networkOption as RadioGroup
+        var selectedNetOpt = JobInfo.NETWORK_TYPE_NONE
+        val seekBarValue = seekBar.progress
+            jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+
+        when (networkOption.checkedRadioButtonId) {
+            R.id.noNetwork -> selectedNetOpt = JobInfo.NETWORK_TYPE_NONE
+            R.id.anyNetwork -> selectedNetOpt = JobInfo.NETWORK_TYPE_ANY
+            R.id.wifiNetwork -> selectedNetOpt = JobInfo.NETWORK_TYPE_UNMETERED
+        }
+
+        // ComponentName is used to associate the JobService with the JobInfo object.
+        val componentName = ComponentName(packageName, NotificationJobService::class.java.name)
+
+        val jobBuilder = JobInfo.Builder(AADConstants.SCHEDULE_JOB_ID, componentName)
+            .setRequiredNetworkType(selectedNetOpt)
+            .setRequiresDeviceIdle(idleSwitch.isChecked)
+            .setRequiresCharging(chargingSwitch.isChecked)
+
+        if (seekBarValue > 0) {
+            // setOverrideDeadline parameter is in milliseconds.
+            jobBuilder.setOverrideDeadline(seekBarValue * 1000L)
+        }
+
+        if (selectedNetOpt != JobInfo.NETWORK_TYPE_NONE || idleSwitch.isChecked
+            || chargingSwitch.isChecked || seekBarValue > 0) {
+            jobScheduler.schedule(jobBuilder.build())
+            customToast("Job Scheduled, job will run when the constraints are met.")
+        }
+        else {
+            customToast("please Set at least one constrain...")
+        }
+    }
+
+    /**
+     * Cancel all the jobs if there is any.
+     */
+    private fun cancelJob() {
+        jobScheduler.cancelAll()
+        customToast("All Jobs Cancelled...")
     }
 }
