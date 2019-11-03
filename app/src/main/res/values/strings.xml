@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">AADPractice</string>
     <string name="notification_title">Sample Notification</string>
-    <string name="notifcation_detail">This is sample notification 1</string>
+    <string name="notification_detail">This is sample notification 1</string>
     <string name="reply_label">Reply</string>
+    <string name="hint_word">Enter Word</string>
+    <string name="button_save">Save</string>
+    <string name="empty_not_save">Word not saved because it is empty.</string>
 </resources>

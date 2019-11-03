@@ -3,4 +3,15 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    // Colors used in Room-ViewModel-LiveData snippet.
+    <color name="colorPrimaryDB">#2196F3</color>
+    <color name="colorPrimaryLight">#64b5f6</color>
+    <color name="colorPrimaryDarkDB">#1976D2</color>
+    <color name="colorAccentDB">#FFFF9800</color>
+    <color name="colorTextPrimary">@android:color/white</color>
+    <color name="colorScreenBackground">#fff3e0</color>
+    <color name="colorTextHint">#E0E0E0</color>
+
+    <color name="buttonLabel">#d3d3d3</color>
 </resources>

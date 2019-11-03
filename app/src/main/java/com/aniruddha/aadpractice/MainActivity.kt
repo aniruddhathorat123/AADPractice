@@ -10,11 +10,11 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         cancelJob.setOnClickListener(this)
         idleSwitch.setOnClickListener(this)
         chargingSwitch.setOnClickListener(this)
+        nextBt.setOnClickListener(this)
 
         // SeekBar sets the deadline to execute the task between 0 to 100.
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -65,6 +66,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.notificationButton -> startNotification()
             R.id.scheduleJob -> scheduleJob()
             R.id.cancelJob -> cancelJob()
+            R.id.nextBt -> startSecond()
         }
     }
 
@@ -84,7 +86,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val builder = NotificationCompat.Builder(this,AADConstants.CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(getString(R.string.notification_title))
-            .setContentText(getString(R.string.notifcation_detail))
+            .setContentText(getString(R.string.notification_detail))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -201,5 +203,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun cancelJob() {
         jobScheduler.cancelAll()
         customToast("All Jobs Cancelled...")
+    }
+
+    private fun startSecond() {
+        startActivity(Intent(this, SecondActivity::class.java))
     }
 }
