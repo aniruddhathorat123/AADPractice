@@ -5,5 +5,8 @@
     <string name="reply_label">Reply</string>
     <string name="hint_word">Enter Word</string>
     <string name="button_save">Save</string>
+    <string name="book_instructions">Enter a book name to find out who wrote the book. </string>
+    <string name="book_button_text">Search Books</string>
+    <string name="book_input_hint">Book Title</string>
     <string name="empty_not_save">Word not saved because it is empty.</string>
 </resources>
