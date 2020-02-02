@@ -1,0 +1,14 @@
+DAO : relate method call to the query. execute it and return result.
+
+RoomDatabase : Need single instance for complete app, uses databasebuilder, and database callbacks,
+               populate database login in database callbacks.
+
+Communication and execution:
+
+- app uses viewmodel to observe change in data.
+- Viewmodel uses application context to init roomDB, this RoomDB gives DAO instance. which used to get
+  repository instance and through that instance viewmodel can insert data and gets the updated data.
+- Repository had wrapper methods like insert and getdata for the same DAO methods. So it is kind of single source
+  communication. So repository used as point where we can build loginc to fetch data from whether server or DB itself.
+- roomDB populate the database first time and adds the some sample data into it.
+
