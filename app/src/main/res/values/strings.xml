@@ -9,4 +9,7 @@
     <string name="book_button_text">Search Books</string>
     <string name="book_input_hint">Book Title</string>
     <string name="empty_not_save">Word not saved because it is empty.</string>
+    <string name="loading">Loading...</string>
+    <string name="network_connection_error">"Network Connection not available"</string>
+    <string name="empty_input_submit_error">"Enter the book input first"</string>
 </resources>

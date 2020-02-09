@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         idleSwitch.setOnClickListener(this)
         chargingSwitch.setOnClickListener(this)
         nextBt.setOnClickListener(this)
+        booksBt.setOnClickListener(this)
 
         // SeekBar sets the deadline to execute the task between 0 to 100.
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -67,6 +68,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.scheduleJob -> scheduleJob()
             R.id.cancelJob -> cancelJob()
             R.id.nextBt -> startSecond()
+            R.id.booksBt -> startWhoWroteIt()
         }
     }
 
@@ -207,5 +209,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun startSecond() {
         startActivity(Intent(this, SecondActivity::class.java))
+    }
+
+    private fun startWhoWroteIt() {
+        startActivity(Intent(this, WhoWroteIt::class.java))
     }
 }
